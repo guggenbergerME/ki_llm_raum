@@ -1,0 +1,38 @@
+services:
+  # ---- Ollama LLM Runtime ----
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "${SERVER_IP:-0.0.0.0}:${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE:-5m}
+      - OLLAMA_HOST=0.0.0.0
+    networks:
+      - ollama-net
+
+  # ---- Open WebUI ----
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    ports:
+      - "${SERVER_IP:-0.0.0.0}:${WEBUI_PORT:-3000}:8080"
+    volumes:
+      - webui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-false}
+      - WEBUI_AUTH=${WEBUI_AUTH:-true}
+    depends_on:
+      - ollama
+    networks:
+      - ollama-net
+
+volumes:
+  ollama_data:
+  webui_data:
+
+networks:
+  ollama-net:
