@@ -255,6 +255,32 @@ docker compose exec ollama ollama rm <modellname>
 | `mistral` | 4.1 GB | 8 GB | Schnell, gut fuer Deutsch |
 | `gemma2` | 5.4 GB | 8 GB | Google-Modell, vielseitig |
 
+### Empfohlenes Modell fuer die Raumbuchung
+
+**`mistral`** (7B) ist die beste Wahl fuer das Raumbuchungssystem:
+
+| Kriterium | Bewertung |
+|-----------|-----------|
+| Deutsch-Verstaendnis | Sehr gut – franzoesisches Unternehmen, starker Fokus auf europaeische Sprachen |
+| Strukturierte Ausgaben | Zuverlaessig beim Extrahieren von Datum, Uhrzeit und Raum aus natuerlicher Sprache |
+| Geschwindigkeit | Schnelle Inferenz auf CPU, gut fuer interaktive Nutzung |
+| Ressourcenbedarf | Nur 4.1 GB, passt problemlos in 8 GB RAM |
+
+**Modell installieren:**
+
+```bash
+cd /opt/ki_llm_raum
+docker compose exec ollama ollama pull mistral
+```
+
+**Alternativen je nach Situation:**
+
+| Situation | Empfehlung |
+|-----------|-----------|
+| RAM knapp (< 6 GB) | `llama3.2` (3B) – schnellste Option, 2 GB |
+| Maximale Qualitaet | `llama3.1:8b` – staerker beim Reasoning, braucht 8 GB RAM |
+| Allrounder | `gemma2` – vielseitig, gut bei kurzen Antworten |
+
 [↑ Top](#top)
 
 ---
