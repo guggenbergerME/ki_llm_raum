@@ -46,7 +46,7 @@ DEFAULT_IP=$(get_default_ip)
 DEFAULT_WEBUI_PORT="3000"
 DEFAULT_OLLAMA_PORT="11434"
 DEFAULT_TZ="Europe/Berlin"
-DEFAULT_MODEL="llama3.2"
+DEFAULT_MODEL="mistral"
 
 info "Bitte gib die gewuenschten Einstellungen ein:"
 echo ""

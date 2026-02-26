@@ -191,7 +191,7 @@ git clone https://github.com/guggenbergerME/ki_llm_raum.git /tmp/ki_llm_raum_set
 | Ollama API Port | `11434` | Port fuer die Ollama REST API |
 | Domain | *(leer)* | Domain fuer externen Zugriff (z.B. `ki.deine-firma.info`) |
 | Zeitzone | `Europe/Berlin` | Zeitzone |
-| Erstes Modell | `llama3.2` | LLM-Modell das beim Start heruntergeladen wird |
+| Erstes Modell | `mistral` | LLM-Modell das beim Start heruntergeladen wird |
 
 ### Das Skript erledigt automatisch
 
@@ -215,7 +215,7 @@ git clone https://github.com/guggenbergerME/ki_llm_raum.git /tmp/ki_llm_raum_set
 | `WEBUI_PORT` | `3000` | Port fuer Open WebUI |
 | `OLLAMA_PORT` | `11434` | Port fuer Ollama API |
 | `OLLAMA_DOMAIN` | *(leer)* | Domain fuer externen Zugriff |
-| `OLLAMA_MODEL` | `llama3.2` | Standard-Modell |
+| `OLLAMA_MODEL` | `mistral` | Standard-Modell |
 | `OLLAMA_KEEP_ALIVE` | `5m` | Wie lange ein Modell im RAM bleibt nach letzter Anfrage |
 | `ANONYMIZED_TELEMETRY` | `false` | Telemetrie deaktiviert |
 
@@ -229,7 +229,7 @@ git clone https://github.com/guggenbergerME/ki_llm_raum.git /tmp/ki_llm_raum_set
 
 ```bash
 cd /opt/ki_llm_raum
-docker compose exec ollama ollama pull llama3.2
+docker compose exec ollama ollama pull mistral
 docker compose exec ollama ollama pull mistral
 docker compose exec ollama ollama pull gemma2
 ```
@@ -250,7 +250,7 @@ docker compose exec ollama ollama rm <modellname>
 
 | Modell | Groesse | RAM-Bedarf | Beschreibung |
 |--------|---------|------------|-------------|
-| `llama3.2` | 2 GB | 4 GB | Schnell, gut fuer einfache Aufgaben |
+| `mistral` | 2 GB | 4 GB | Schnell, gut fuer einfache Aufgaben |
 | `llama3.1:8b` | 4.7 GB | 8 GB | Ausgewogen, gute Qualitaet |
 | `mistral` | 4.1 GB | 8 GB | Schnell, gut fuer Deutsch |
 | `gemma2` | 5.4 GB | 8 GB | Google-Modell, vielseitig |
@@ -277,7 +277,7 @@ docker compose exec ollama ollama pull mistral
 
 | Situation | Empfehlung |
 |-----------|-----------|
-| RAM knapp (< 6 GB) | `llama3.2` (3B) – schnellste Option, 2 GB |
+| RAM knapp (< 6 GB) | `mistral` (3B) – schnellste Option, 2 GB |
 | Maximale Qualitaet | `llama3.1:8b` – staerker beim Reasoning, braucht 8 GB RAM |
 | Allrounder | `gemma2` – vielseitig, gut bei kurzen Antworten |
 
@@ -292,8 +292,8 @@ Ollama stellt eine **OpenAI-kompatible API** bereit.
 ### Chat-Anfrage
 
 ```bash
-curl http://<IP>:11434/api/chat -d '{
-  "model": "llama3.2",
+curl http://10.100.1.118:11434/api/chat -d '{
+  "model": "mistral",
   "messages": [
     {"role": "user", "content": "Welche Raeume sind heute frei?"}
   ],
@@ -304,8 +304,8 @@ curl http://<IP>:11434/api/chat -d '{
 ### Generate-Anfrage
 
 ```bash
-curl http://<IP>:11434/api/generate -d '{
-  "model": "llama3.2",
+curl http://10.100.1.118:11434/api/generate -d '{
+  "model": "mistral",
   "prompt": "Erstelle eine Zusammenfassung der heutigen Buchungen.",
   "stream": false
 }'
@@ -314,8 +314,8 @@ curl http://<IP>:11434/api/generate -d '{
 ### OpenAI-kompatibel (fuer bestehende Integrationen)
 
 ```bash
-curl http://<IP>:11434/v1/chat/completions -d '{
-  "model": "llama3.2",
+curl http://10.100.1.118:11434/v1/chat/completions -d '{
+  "model": "mistral",
   "messages": [
     {"role": "user", "content": "Hallo"}
   ]
@@ -335,8 +335,8 @@ Die Ollama-Instanz kann vom [Raumbuchungssystem](https://github.com/guggenberger
 In der `.env` des Raumbuchungssystems folgende Variablen setzen:
 
 ```env
-LLM_API_URL=http://<Ollama-IP>:11434
-LLM_MODEL=llama3.2
+LLM_API_URL=http://10.100.1.118:11434
+LLM_MODEL=mistral
 ```
 
 ### Moegliche KI-Funktionen
@@ -372,7 +372,7 @@ NPM erreichbar unter `http://[NPM-IP]:81`
 |------|------|
 | Domain | `ki.deine-firma.info` |
 | Scheme | `http` |
-| Forward Host | `<Ollama-IP>` (die im Setup gewaehlte IP) |
+| Forward Host | `10.100.1.118` (die im Setup gewaehlte IP) |
 | Forward Port | `3000` (Open WebUI Port) |
 | Cache Assets | aktivieren |
 | Block Common Exploits | aktivieren |
@@ -449,7 +449,7 @@ docker compose exec open-webui tar -czf - /app/backend/data \
 
 | Quelle | Ziel | Port | Aktion |
 |--------|------|------|--------|
-| VLAN 30 (NPM) | `<Ollama-IP>` | TCP `3000` | Allow |
-| Raumbuchungs-Server | `<Ollama-IP>` | TCP `11434` | Allow |
+| VLAN 30 (NPM) | `10.100.1.118` | TCP `3000` | Allow |
+| Raumbuchungs-Server | `10.100.1.118` | TCP `11434` | Allow |
 
 [↑ Top](#top)
