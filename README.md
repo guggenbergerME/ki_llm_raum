@@ -16,6 +16,7 @@ Lokale LLM-Instanz mit **Ollama** und **Open WebUI** via Docker Compose fuer den
 5. [Repository klonen und einrichten](#repository-klonen-und-einrichten)
 6. [Konfiguration](#konfiguration)
 7. [Modelle verwalten](#modelle-verwalten)
+   - [Serverleistung und Timeouts](#serverleistung-und-timeouts)
 8. [API-Nutzung](#api-nutzung)
 9. [Integration mit Raumbuchungssystem](#integration-mit-raumbuchungssystem)
 10. [Nach der Installation](#nach-der-installation)
@@ -265,6 +266,42 @@ docker compose exec ollama ollama rm <modellname>
 | Strukturierte Ausgaben | Zuverlaessig beim Extrahieren von Datum, Uhrzeit und Raum aus natuerlicher Sprache |
 | Geschwindigkeit | Schnelle Inferenz auf CPU, gut fuer interaktive Nutzung |
 | Ressourcenbedarf | Nur 4.1 GB, passt problemlos in 8 GB RAM |
+
+### Serverleistung und Timeouts
+
+Das Raumbuchungssystem sendet Anfragen an Ollama mit einem Timeout von **120 Sekunden**. Wenn der Server zu wenig Ressourcen hat, antwortet das Modell nicht rechtzeitig und die Email-Buchung schlaegt fehl.
+
+**Mindestanforderungen fuer zuverlaessigen Betrieb:**
+
+| Modellgroesse | CPU-Kerne | RAM | Antwortzeit (ca.) |
+|---------------|-----------|-----|-------------------|
+| 1-3B | 2 Kerne | 4 GB | 5-15 Sekunden |
+| 7B | 4 Kerne | 8 GB | 15-60 Sekunden |
+| 13B | 6 Kerne | 16 GB | 30-120 Sekunden |
+
+> **Wichtig:** Ohne GPU laeuft die gesamte Inferenz auf der CPU. Bei zu wenig Ressourcen kommt es zu Timeouts und die Raumbuchung per Email funktioniert nicht.
+
+**Ressourcensparende Modelle als Alternative zu `mistral` (7B):**
+
+| Modell | Groesse | RAM-Bedarf | Qualitaet Deutsch | Hinweis |
+|--------|---------|------------|-------------------|---------|
+| `gemma3:1b` | 0.8 GB | 2 GB | Gut | Sehr schnell, minimale Ressourcen |
+| `phi4-mini` | 2.5 GB | 4 GB | Gut | Gutes Verhaeltnis Qualitaet/Geschwindigkeit |
+| `gemma3:4b` | 3.3 GB | 4 GB | Sehr gut | Empfehlung fuer schwache Server |
+| `mistral` | 4.1 GB | 8 GB | Sehr gut | Standard, braucht aber genuegend CPU/RAM |
+
+Falls der Server zu langsam ist, ein kleineres Modell testen:
+
+```bash
+cd /opt/ki_llm_raum
+docker compose exec ollama ollama pull gemma3:4b
+```
+
+Dann in der `.env` des Raumbuchungssystems das Modell aendern:
+
+```env
+OLLAMA_MODEL=gemma3:4b
+```
 
 **Modell installieren:**
 
